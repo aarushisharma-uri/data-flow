@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URIF Data Guide - PowerBI Chapter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0078D4;
+            --secondary-color: #106EBE;
+            --accent-color: #50E6FF;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-color: #323130;
+            --border-color: #e1dfdd;
+            --code-bg: #f3f2f1;
+            --success-color: #107C10;
+            --warning-color: #FF8C00;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        #password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .password-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .password-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .password-container p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .password-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .password-submit:hover {
+            background: var(--secondary-color);
+        }
+
+        .password-error {
+            color: #d13438;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        #main-content {
+            display: none;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        .tab-button:hover {
+            background: var(--code-bg);
+        }
+
+        .tab-button.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .card h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .card h3 {
+            color: var(--secondary-color);
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+
+        .credential-box {
+            background: var(--code-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .credential-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            min-width: 100px;
+        }
+
+        .credential-value {
+            font-family: 'Courier New', monospace;
+            color: var(--text-color);
+            flex: 1;
+            padding: 0 10px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .copy-btn.copied {
+            background: var(--success-color);
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%, #e0e0e0);
+            background-size: 20px 20px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+
+        .screenshot-placeholder:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 120, 212, 0.05);
+        }
+
+        .accordion {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background: var(--code-bg);
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: #e8e6e4;
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+        }
+
+        .accordion-content.active {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .accordion-body {
+            padding: 20px;
+        }
+
+        .info-box {
+            background: #E3F2FD;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #FFF3E0;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #E8F5E9;
+            border-left: 4px solid var(--success-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        ul.bullet-list {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        ul.bullet-list li {
+            margin: 8px 0;
+            padding-left: 10px;
+        }
+
+        ol.numbered-list {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        ol.numbered-list li {
+            margin: 10px 0;
+            padding-left: 10px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+            min-width: 100px;
+        }
+
+        .comparison-table th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: var(--code-bg);
+        }
+
+        code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .toggle-section {
+            margin: 20px 0;
+        }
+
+        .toggle-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .toggle-content {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--code-bg);
+            border-radius: 6px;
+        }
+
+        .toggle-content.visible {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .faq-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background: var(--code-bg);
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: #e8e6e4;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+        }
+
+        .faq-answer.active {
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .faq-answer-content {
+            padding: 20px;
+        }
+
+        footer {
+            background: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .credential-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .copy-btn {
+                margin-top: 10px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Protection Screen -->
+    <div id="password-screen">
+        <div class="password-container">
+            <h2>🔒 Access Required</h2>
+            <p>This is a private URIF internal resource. Please enter the access code to continue.</p>
+            <input type="password" id="password-input" class="password-input" placeholder="Enter access code" />
+            <button onclick="checkPassword()" class="password-submit">Enter</button>
+            <div id="password-error" class="password-error">Incorrect access code. Please try again.</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <header>
+            <div class="header-content">
+                <div class="breadcrumb">
+                    <a href="#">URIF Data Guide</a> / <a href="#">Chapters</a> / PowerBI
+                </div>
+                <h1>📊 PowerBI Data Structure Guide</h1>
+                <p>Understanding URIF Advancement Operations Data</p>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="tab-button active" onclick="switchTab('getting-started')">Getting Started</button>
+                <button class="tab-button" onclick="switchTab('data-structure')">Data Structure</button>
+                <button class="tab-button" onclick="switchTab('windfall')">Windfall Process</button>
+                <button class="tab-button" onclick="switchTab('faqs')">FAQs</button>
+            </div>
+
+            <!-- ==================== TAB 1: GETTING STARTED ==================== -->
+            <div id="getting-started" class="tab-content active">
+                <div class="card">
+                    <h2>🚀 Initial Setup for PowerBI Desktop</h2>
+                    
+                    <div class="info-box">
+                        <strong>ℹ️ First-Time Setup:</strong> The following credentials are only needed for your initial setup.
+                    </div>
+
+                    <div class="credential-box">
+                        <h3>One-Time Credentials</h3>
+                        <div class="credential-item">
+                            <span class="credential-label">User ID:</span>
+                            <span class="credential-value" id="user-id">POWERBI_ANALYTICS_USER</span>
+                            <button class="copy-btn" onclick="copyToClipboard('user-id', this)">Copy</button>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">Password:</span>
+                            <span class="credential-value" id="pwd-value">QRqdM~S&G>]ww8)Cro</span>
+                            <button class="copy-btn" onclick="copyToClipboard('pwd-value', this)">Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Required Every Login:</strong> You'll need to enter these details each time you log in to connect to the data source.
+                    </div>
+
+                    <div class="credential-box">
+                        <h3>Login Details (Every Session)</h3>
+                        <div class="credential-item">
+                            <span class="credential-label">Server:</span>
+                            <span class="credential-value" id="server">urifoundation.east-us-2.azure.snowflakecomputing.com</span>
+                            <button class="copy-btn" onclick="copyToClipboard('server', this)">Copy</button>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">Warehouse:</span>
+                            <span class="credential-value" id="warehouse">ANALYTICS_WH</span>
+                            <button class="copy-btn" onclick="copyToClipboard('warehouse', this)">Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Important:</strong> Enter the server URL <strong>without</strong> the "https://" prefix.
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📷 Screenshot: PowerBI Connection Dialog<br>
+                        <small>Add screenshot showing server and warehouse fields</small>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📍 Navigator Window - Relevant Folders</h2>
+                    
+                    <div class="success-box">
+                        <strong>✅ Focus on These Two Folders Only:</strong>
+                        <ul class="bullet-list">
+                            <li><strong>STAGING_PROD</strong></li>
+                            <li><strong>URIDW_PROD</strong></li>
+                        </ul>
+                        <p style="margin-top: 10px;"><em>All other folders are Snowflake defaults and are not updated/changed by URIF.</em></p>
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📷 Screenshot: Navigator Window<br>
+                        <small>Show STAGING_PROD and URIDW_PROD folders highlighted</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 2: DATA STRUCTURE ==================== -->
+            <div id="data-structure" class="tab-content">
+                <div class="card">
+                    <h2>🗂️ Understanding the Data Structure</h2>
+                    
+                    <!-- STAGING_PROD Accordion -->
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><strong>STAGING_PROD</strong> → ADVANCEMENT</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><strong>Purpose:</strong> Contains copies of tables from AWA (Advancement Web Application)</p>
+                                
+                                <h3>TMS_[...] Tables (Code & Description Files)</h3>
+                                <ul class="bullet-list">
+                                    <li><strong>Purpose:</strong> Description and code lookup tables</li>
+                                    <li><strong>Source:</strong> Oracle database (marked as views but function as tables)</li>
+                                    <li><strong>Structure:</strong> In AWA, these may exist as one massive table, but they're broken down into separate TMS tables to make management easier</li>
+                                    <li><strong>Usage Tip:</strong> When creating PowerBI dashboards, most of the time we use <strong>short descriptions</strong></li>
+                                </ul>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: TMS Tables in Navigator<br>
+                                    <small>Show examples of TMS tables</small>
+                                </div>
+
+                                <h3>Non-TMS Tables (Actual Data Tables)</h3>
+                                <ul class="bullet-list">
+                                    <li>Tables without "TMS" prefix are actual data tables</li>
+                                    <li><strong>⚠️ Ignore these postfixes:</strong> Tables with "_PK" and "_ST" postfixes
+                                        <ul class="bullet-list">
+                                            <li>These are subsets for pieces like addresses or allocations</li>
+                                            <li>Mike has never used them in practice</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                <h3>🔑 ENTITY Table (Most Important)</h3>
+                                <div class="info-box">
+                                    <strong>Purpose:</strong> Contains constituent information
+                                    <ul class="bullet-list">
+                                        <li><strong>Key Details:</strong> Includes fields like ID, start date (ST_START_DT), end date (ST_END_DT) for dynamic record management</li>
+                                        <li><strong>Source:</strong> Snowflake datasets which are updated nightly</li>
+                                        <li><strong>Historical Tracking:</strong> Multiple data entries exist for each constituent because AWA tracks the complete history of constituent record changes</li>
+                                    </ul>
+                                </div>
+
+                                <div class="warning-box">
+                                    <strong>⚠️ CRITICAL - Identifying Current Records:</strong>
+                                    <p>To get current/active constituent records, filter by:</p>
+                                    <code style="display: block; margin: 10px 0; padding: 10px; background: white;">ST_END_DT = Friday, December 31, 9999</code>
+                                    <p><strong>Why?</strong> This date indicates a record is currently active. Historical records will have actual past dates.</p>
+                                </div>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: ENTITY Table in Data View<br>
+                                    <small>Show ST_START_DT and ST_END_DT columns with example dates</small>
+                                </div>
+
+                                <div class="toggle-section">
+                                    <button class="toggle-btn" onclick="toggleContent('entity-example')">
+                                        📋 Show ENTITY Table Example
+                                    </button>
+                                    <div id="entity-example" class="toggle-content">
+                                        <p><strong>Example: How Historical Tracking Works</strong></p>
+                                        <table class="comparison-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Name</th>
+                                                    <th>ST_START_DT</th>
+                                                    <th>ST_END_DT</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>12345</td>
+                                                    <td>John Doe</td>
+                                                    <td>01/15/2020</td>
+                                                    <td>06/30/2022</td>
+                                                    <td>📜 Historical</td>
+                                                </tr>
+                                                <tr style="background: #E8F5E9 !important;">
+                                                    <td>12345</td>
+                                                    <td>John Doe</td>
+                                                    <td>07/01/2022</td>
+                                                    <td>12/31/9999</td>
+                                                    <td>✅ Current</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <p style="margin-top: 10px;"><em>Notice: Same constituent (ID 12345) has two records. The one with ST_END_DT = 12/31/9999 is the current, active record.</em></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- URIDW_PROD Accordion -->
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><strong>URIDW_PROD</strong> → FUNDRAISING</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <div class="info-box">
+                                    <strong>📊 Purpose:</strong> Used for fundraiser analytics
+                                    <ul class="bullet-list">
+                                        <li><strong>Prepared by:</strong> External consultants</li>
+                                        <li><strong>Usage:</strong> Read-only - Mike never touches or changes these tables</li>
+                                        <li><strong>Primary Use:</strong> Used for joins with other datasets</li>
+                                    </ul>
+                                </div>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: URIDW_PROD → FUNDRAISING Folder<br>
+                                    <small>Show folder contents</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📚 Important Tip: Using Data View</h2>
+                    
+                    <div class="success-box">
+                        <strong>✅ Best Practice:</strong> Always go to the <strong>Data View</strong> of a table to understand its structure
+                        <ul class="bullet-list">
+                            <li>Example: The ENTITY table has ST_START_DT and ST_END_DT fields</li>
+                            <li>You'll see multiple entries for each constituent (historical tracking)</li>
+                            <li>Current records always have ST_END_DT = Friday, December 31, 9999</li>
+                        </ul>
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📷 Screenshot: Accessing Data View in PowerBI<br>
+                        <small>Show Data View button/tab</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 3: WINDFALL PROCESS ==================== -->
+            <div id="windfall" class="tab-content">
+                <div class="card">
+                    <h2>💰 Windfall Data Enrichment Process</h2>
+                    
+                    <p>Windfall provides wealth screening and philanthropic capacity analysis. Here's the complete end-to-end workflow:</p>
+
+                    <!-- Step 1 -->
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><strong>Step 1:</strong> Data Extraction</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <h3>Identify Required Data</h3>
+                                <p>Determine the specific data fields needed for Windfall analysis:</p>
+                                <ul class="bullet-list">
+                                    <li>Constituent IDs</li>
+                                    <li>Names (first, last, full)</li>
+                                    <li>Addresses</li>
+                                </ul>
+
+                                <h3>Extract Data</h3>
+                                <p>Use an extract process, possibly written in a tool like PL/SQL or Talend, to pull the necessary data from the internal database (e.g., Snowflake or another data warehouse).</p>
+
+                                <h3>Prepare the File</h3>
+                                <ul class="bullet-list">
+                                    <li>Format the extracted data into a CSV file</li>
+                                    <li>Ensure all required fields are included and formatted correctly</li>
+                                </ul>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: Sample CSV File Structure<br>
+                                    <small>Show column headers and sample data</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><strong>Step 2:</strong> Data Transfer to Windfall</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <h3>FTP Setup</h3>
+                                <p>Using File Transfer Protocol (FTP) to securely transfer the prepared CSV file to Windfall's server.</p>
+
+                                <div class="warning-box">
+                                    <strong>🔒 Security Requirements:</strong>
+                                    <ul class="bullet-list">
+                                        <li><strong>FTP Credentials:</strong> Ensure you have the correct FTP credentials and access details provided by Windfall</li>
+                                        <li><strong>Secure Transfer:</strong> Use secure FTP (SFTP) to encrypt the data during transfer, protecting sensitive information</li>
+                                    </ul>
+                                </div>
+
+                                <h3>Notify Windfall</h3>
+                                <p>Once the file is successfully uploaded, notify the contact at Windfall to inform them that the data is ready for processing.</p>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: FTP Client Connection<br>
+                                    <small>Show FTP connection settings</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><strong>Step 3:</strong> Windfall Processing</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <h3>Data Processing</h3>
+                                <p>Windfall processes the received data to enrich it with additional information:</p>
+                                <ul class="bullet-list">
+                                    <li>Net worth estimates</li>
+                                    <li>Philanthropic indicators</li>
+                                    <li>Donor potential scores</li>
+                                </ul>
+
+                                <h3>Data Enrichment</h3>
+                                <div class="info-box">
+                                    <strong>What Windfall Does:</strong>
+                                    <p>Windfall compares your data against their proprietary datasets and algorithms to generate insights like:</p>
+                                    <ul class="bullet-list">
+                                        <li>Net worth ranges</li>
+                                        <li>Donor potential</li>
+                                        <li>Wealth indicators</li>
+                                        <li>Philanthropic capacity</li>
+                                    </ul>
+                                </div>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: Example Windfall Enrichment Fields<br>
+                                    <small>Show sample enriched data columns</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><strong>Step 4:</strong> Receiving Enriched Data</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <h3>Download Enriched Data</h3>
+                                <p>Windfall provides the enriched data, typically as a CSV file, which we then download using FTP.</p>
+                                
+                                <div class="info-box">
+                                    <strong>📥 Download Process:</strong>
+                                    <ul class="bullet-list">
+                                        <li>Conduct a <strong>manual FTP download</strong> from Windfall's server</li>
+                                        <li>Retrieve the enriched data file (usually CSV format)</li>
+                                        <li>Save to a secure local or network location</li>
+                                    </ul>
+                                </div>
+
+                                <h3>Convert to Excel</h3>
+                                <p>Convert the CSV file to an Excel spreadsheet to facilitate easier data handling and integration with your reporting tools.</p>
+                                
+                                <div class="warning-box">
+                                    <strong>⚠️ Important:</strong> Ensure that fields like constituent IDs retain their original formatting during conversion. Excel may auto-format numbers and strip leading zeros.
+                                </div>
+
+                                <div class="toggle-section">
+                                    <button class="toggle-btn" onclick="toggleContent('excel-tips')">
+                                        💡 Excel Conversion Tips
+                                    </button>
+                                    <div id="excel-tips" class="toggle-content">
+                                        <p><strong>To preserve ID formatting in Excel:</strong></p>
+                                        <ol class="numbered-list">
+                                            <li>Open Excel first (don't double-click the CSV)</li>
+                                            <li>Go to Data → From Text/CSV</li>
+                                            <li>Select your CSV file</li>
+                                            <li>In the import wizard, set ID columns as "Text" format</li>
+                                            <li>Complete the import</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: Excel Import Wizard<br>
+                                    <small>Show text formatting selection for ID columns</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><strong>Step 5:</strong> Data Integration and Analysis</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <h3>Load Data into Power BI</h3>
+                                <p>Import the enriched Excel data into Power BI for analysis and visualization.</p>
+                                
+                                <div class="info-box">
+                                    <strong>📊 Data Connection Steps:</strong>
+                                    <ol class="numbered-list">
+                                        <li>Open Power BI Desktop</li>
+                                        <li>Click "Get Data" → "Excel"</li>
+                                        <li>Navigate to your enriched Excel file</li>
+                                        <li>Select the appropriate sheet(s)</li>
+                                        <li>Click "Load" to import into your data model</li>
+                                    </ol>
+                                </div>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: Power BI Get Data Dialog<br>
+                                    <small>Show Excel connection option</small>
+                                </div>
+
+                                <h3>Join with Existing Data</h3>
+                                <p>Use Power BI to join the Windfall data with existing datasets, such as the entity summary, to enhance reporting capabilities.</p>
+                                
+                                <div class="success-box">
+                                    <strong>✅ Common Join Strategy:</strong>
+                                    <ul class="bullet-list">
+                                        <li>Join on <strong>Constituent ID</strong> field</li>
+                                        <li>Link Windfall data to ENTITY table</li>
+                                        <li>Create relationships in the Model view</li>
+                                    </ul>
+                                </div>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: Power BI Relationships View<br>
+                                    <small>Show how tables are joined</small>
+                                </div>
+
+                                <h3>Create Reports and Dashboards</h3>
+                                <p>Utilize Power BI's features to create dynamic reports and dashboards that reflect the enriched data insights.</p>
+                                
+                                <div class="toggle-section">
+                                    <button class="toggle-btn" onclick="toggleContent('dashboard-ideas')">
+                                        📈 Dashboard Ideas
+                                    </button>
+                                    <div id="dashboard-ideas" class="toggle-content">
+                                        <p><strong>Suggested visualizations with Windfall data:</strong></p>
+                                        <ul class="bullet-list">
+                                            <li><strong>Wealth Distribution Chart:</strong> Pie or bar chart showing constituents by net worth range</li>
+                                            <li><strong>Donor Potential Matrix:</strong> Scatter plot of giving history vs. estimated capacity</li>
+                                            <li><strong>Geographic Wealth Map:</strong> Map visualization of high-capacity donors by region</li>
+                                            <li><strong>Top Prospects List:</strong> Table of constituents ranked by philanthropic potential</li>
+                                            <li><strong>Capacity vs. Giving Gap Analysis:</strong> Identify under-engaged high-capacity donors</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="screenshot-placeholder">
+                                    📷 Screenshot: Sample Windfall Dashboard<br>
+                                    <small>Show example dashboard with Windfall data</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Windfall Process Summary Card -->
+                <div class="card">
+                    <h2>📋 Windfall Process Summary</h2>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Step</th>
+                                <th>Action</th>
+                                <th>Output</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1. Extract</strong></td>
+                                <td>Pull constituent data from Snowflake</td>
+                                <td>CSV file with IDs, names, addresses</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2. Transfer</strong></td>
+                                <td>Upload via SFTP to Windfall</td>
+                                <td>File delivered to Windfall server</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3. Process</strong></td>
+                                <td>Windfall enriches the data</td>
+                                <td>Wealth & philanthropic indicators added</td>
+                            </tr>
+                            <tr>
+                                <td><strong>4. Receive</strong></td>
+                                <td>Download enriched file via FTP</td>
+                                <td>Excel file with enriched data</td>
+                            </tr>
+                            <tr>
+                                <td><strong>5. Integrate</strong></td>
+                                <td>Load into Power BI, join with existing data</td>
+                                <td>Reports & dashboards</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 4: FAQs ==================== -->
+            <div id="faqs" class="tab-content">
+                <div class="card">
+                    <h2>❓ Frequently Asked Questions</h2>
+                    
+                    <!-- FAQ 1 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What is the difference between ENTITY and URI_ENTITY_SUMMARY?</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <table class="comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Aspect</th>
+                                            <th>ENTITY</th>
+                                            <th>URI_ENTITY_SUMMARY</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Purpose</strong></td>
+                                            <td>Raw constituent data with full history</td>
+                                            <td>Summarized/aggregated constituent data</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Records</strong></td>
+                                            <td>Multiple records per constituent (historical)</td>
+                                            <td>Typically one record per constituent</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Use Case</strong></td>
+                                            <td>When you need historical changes or detailed data</td>
+                                            <td>When you need current snapshot data quickly</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Filtering Needed</strong></td>
+                                            <td>Yes - filter by ST_END_DT for current records</td>
+                                            <td>Usually pre-filtered to current data</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <div class="info-box">
+                                    <strong>💡 Tip:</strong> Use URI_ENTITY_SUMMARY for quick reports. Use ENTITY when you need to track changes over time or need specific historical data.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What is the difference between Views and Tables?</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <table class="comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Aspect</th>
+                                            <th>Table</th>
+                                            <th>View</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Definition</strong></td>
+                                            <td>A database object that stores data in rows and columns</td>
+                                            <td>A virtual table representing the result of a stored query</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Data Storage</strong></td>
+                                            <td>Physical storage of data</td>
+                                            <td>Does not store data itself</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Performance</strong></td>
+                                            <td>Generally faster for direct queries</td>
+                                            <td>Query runs each time view is accessed</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Updates</strong></td>
+                                            <td>Data persists until explicitly changed</td>
+                                            <td>Always reflects current underlying data</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="info-box">
+                                    <strong>📝 Note about TMS tables:</strong> In our system, TMS tables are marked as views in the source (Oracle) but function as tables for our purposes. You can treat them like regular tables when building reports.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What is the difference between a Column and a Measure?</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <h3>📊 Columns</h3>
+                                <div class="info-box">
+                                    <ul class="bullet-list">
+                                        <li><strong>Definition:</strong> A field in a table that contains data</li>
+                                        <li><strong>Nature:</strong> Static component that exists in the dataset</li>
+                                        <li><strong>Data Level:</strong> Contains data at the row level - each row has a value for each column</li>
+                                        <li><strong>Storage:</strong> Values are stored in the dataset and are part of the table's structure</li>
+                                        <li><strong>Use Case:</strong> When you need to store calculated results at the row level</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="success-box">
+                                    <strong>✅ Column Example:</strong>
+                                    <p>Adding a new column to calculate full name by concatenating first and last names:</p>
+                                    <code style="display: block; margin-top: 10px; padding: 10px; background: white;">Full Name = [First Name] & " " & [Last Name]</code>
+                                </div>
+
+                                <h3>📈 Measures</h3>
+                                <div class="info-box">
+                                    <ul class="bullet-list">
+                                        <li><strong>Definition:</strong> A dynamic calculation used to perform aggregations or calculations on data</li>
+                                        <li><strong>Nature:</strong> Dynamic - determined by the context of the report (filters, dimensions selected)</li>
+                                        <li><strong>Storage:</strong> Not stored in the dataset - computed on the fly when needed</li>
+                                        <li><strong>Use Case:</strong> For calculations that need to be dynamic and responsive to report interactions</li>
+                                        <li><strong>Common Uses:</strong> Sums, averages, counts, and other aggregations</li>
+                                    </ul>
+                                </div>
+
+                                <div class="success-box">
+                                    <strong>✅ Measure Example:</strong>
+                                    <p>Calculating total sales dynamically based on filters applied in a report:</p>
+                                    <code style="display: block; margin-top: 10px; padding: 10px; background: white;">Total Sales = SUM(Sales[Amount])</code>
+                                </div>
+
+                                <h3>Quick Comparison</h3>
+                                <table class="comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Aspect</th>
+                                            <th>Column</th>
+                                            <th>Measure</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Calculation Time</strong></td>
+                                            <td>When data is loaded/refreshed</td>
+                                            <td>When report is rendered</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Storage</strong></td>
+                                            <td>Stored in model (uses memory)</td>
+                                            <td>Not stored (calculated on demand)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Context Aware</strong></td>
+                                            <td>No - same value regardless of filters</td>
+                                            <td>Yes - changes based on filters/slicers</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Can be used in</strong></td>
+                                            <td>Rows, filters, slicers, axes</td>
+                                            <td>Values area of visualizations</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Row-level data</strong></td>
+                                            <td>✅ Yes</td>
+                                            <td>❌ No (aggregated)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="warning-box">
+                                    <strong>⚠️ When to use which:</strong>
+                                    <ul class="bullet-list">
+                                        <li><strong>Use a Column</strong> when you need to categorize, filter, or slice data, or when you need row-level calculations</li>
+                                        <li><strong>Use a Measure</strong> when you need aggregations that respond to user interactions (filters, slicers)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 4 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Why do I see multiple records for the same constituent?</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>AWA (Advancement Web Application) tracks the <strong>complete history</strong> of constituent record changes. This means:</p>
+                                
+                                <ul class="bullet-list">
+                                    <li>Every time a constituent's information changes (address, name, status, etc.), a new record is created</li>
+                                    <li>The old record gets an end date (ST_END_DT) set to when the change occurred</li>
+                                    <li>The new record gets a start date (ST_START_DT) of when it became active</li>
+                                    <li>Current/active records always have <code>ST_END_DT = 12/31/9999</code></li>
+                                </ul>
+
+                                <div class="success-box">
+                                    <strong>✅ To get only current records:</strong>
+                                    <p>Filter your data where:</p>
+                                    <code style="display: block; margin-top: 10px; padding: 10px; background: white;">ST_END_DT = "12/31/9999"</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 5 -->
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Which tables should I ignore?</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <div class="warning-box">
+                                    <strong>⚠️ Tables to Ignore:</strong>
+                                    <ul class="bullet-list">
+                                        <li><strong>Tables with "_PK" postfix:</strong> Subsets for primary keys</li>
+                                        <li><strong>Tables with "_ST" postfix:</strong> Subsets for addresses/allocations</li>
+                                        <li><strong>All folders except STAGING_PROD and URIDW_PROD:</strong> These are Snowflake defaults not maintained by URIF</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="success-box">
+                                    <strong>✅ Tables to Focus On:</strong>
+                                    <ul class="bullet-list">
+                                        <li><strong>STAGING_PROD → ADVANCEMENT:</strong> Main data tables and TMS code files</li>
+                                        <li><strong>URIDW_PROD → FUNDRAISING:</strong> Fundraiser analytics (for joins)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Reference Card -->
+                <div class="card">
+                    <h2>📌 Quick Reference</h2>
+                    
+                    <div class="credential-box">
+                        <h3>Key Dates to Remember</h3>
+                        <div class="credential-item">
+                            <span class="credential-label">Current Record Indicator:</span>
+                            <span class="credential-value">ST_END_DT = Friday, December 31, 9999</span>
+                        </div>
+                    </div>
+
+                    <div class="credential-box">
+                        <h3>Important Folders</h3>
+                        <div class="credential-item">
+                            <span class="credential-label">Main Data:</span>
+                            <span class="credential-value">STAGING_PROD → ADVANCEMENT</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">Analytics:</span>
+                            <span class="credential-value">URIDW_PROD → FUNDRAISING</span>
+                        </div>
+                    </div>
+
+                    <div class="credential-box">
+                        <h3>Table Naming Conventions</h3>
+                        <div class="credential-item">
+                            <span class="credential-label">TMS_[...]:</span>
+                            <span class="credential-value">Code/description lookup tables</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">_PK / _ST:</span>
+                            <span class="credential-value">Ignore these (subsets)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>URIF Data Guide - Internal Documentation</p>
+            <p style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Last Updated: January 2025 | For internal use only</p>
+        </footer>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // ============================================
+        // PASSWORD PROTECTION
+        // ============================================
+        // CHANGE THIS PASSWORD TO YOUR DESIRED ACCESS CODE
+        const CORRECT_PASSWORD = 'URIF2024';
+
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            const errorDiv = document.getElementById('password-error');
+            
+            if (input === CORRECT_PASSWORD) {
+                document.getElementById('password-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                sessionStorage.setItem('authenticated', 'true');
+            } else {
+                errorDiv.style.display = 'block';
+                document.getElementById('password-input').value = '';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Allow Enter key to submit password
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password-input');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+                // Focus on password input
+                passwordInput.focus();
+            }
+            
+            // Check if already authenticated in this session
+            if (sessionStorage.getItem('authenticated') === 'true') {
+                document.getElementById('password-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }
+        });
+
+        // ============================================
+        // TAB FUNCTIONALITY
+        // ============================================
+        function switchTab(tabId) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Scroll to top of container
+            document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ============================================
+        // COPY TO CLIPBOARD
+        // ============================================
+        function copyToClipboard(elementId, button) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // ============================================
+        // ACCORDION FUNCTIONALITY
+        // ============================================
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const isActive = header.classList.contains('active');
+            
+            // Toggle clicked accordion
+            if (!isActive) {
+                header.classList.add('active');
+                content.classList.add('active');
+            } else {
+                header.classList.remove('active');
+                content.classList.remove('active');
+            }
+        }
+
+        // ============================================
+        // FAQ TOGGLE FUNCTIONALITY
+        // ============================================
+        function toggleFaq(question) {
+            const answer = question.nextElementSibling;
+            const icon = question.querySelector('.accordion-icon');
+            const isActive = answer.classList.contains('active');
+            
+            if (!isActive) {
+                answer.classList.add('active');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                answer.classList.remove('active');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // ============================================
+        // TOGGLE CONTENT (for expandable sections)
+        // ============================================
+        function toggleContent(contentId) {
+            const content = document.getElementById(contentId);
+            content.classList.toggle('visible');
+            
+            // Update button text
+            const button = content.previousElementSibling;
+            if (content.classList.contains('visible')) {
+                button.textContent = button.textContent.replace('Show', 'Hide');
+            } else {
+                button.textContent = button.textContent.replace('Hide', 'Show');
+            }
+        }
+    </script>
+</body>
+</html>
