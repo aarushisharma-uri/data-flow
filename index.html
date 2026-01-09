@@ -569,7 +569,7 @@
                 <p class="header-subtitle">Comprehensive documentation of data migration from AWA to Salesforce (Affinaquest)</p>
                 <div class="header-meta">
                     <span><i class="fas fa-university"></i> University of Rhode Island Foundation</span>
-                    <span><i class="fas fa-calendar"></i> Migration Period: 2024-2025</span>
+                    <span><i class="fas fa-calendar"></i> Migration Period: 2025-2026</span>
                     <span><i class="fas fa-sync"></i> Last Updated: <span id="lastUpdated"></span></span>
                 </div>
             </div>
@@ -2124,7 +2124,7 @@
                 
                 return `
                     <div class="table-card" id="table-${table.tableName}">
-                        <div class="table-card-header" onclick="toggleTable('${table.tableName}')">
+                        <div class="table-card-header" onclick="toggleTable(this)">
                             <div class="table-card-title">
                                 <div class="icon">
                                     <i class="fas fa-table"></i>
@@ -2230,8 +2230,8 @@
             renderStats(tables);
         }
 
-        function toggleTable(tableName) {
-            const card = document.getElementById(`table-${tableName}`);
+        function toggleTable(element) {
+            const card = element.closest('.table-card');
             card.classList.toggle('expanded');
         }
 
@@ -2253,7 +2253,10 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             
             document.querySelectorAll('.table-card').forEach(card => {
-                const tableName = card.id.replace('table-', '');
+                const tableNameEl = card.querySelector('h3');
+                if (!tableNameEl) return;
+                
+                const tableName = tableNameEl.textContent;
                 const table = migrationData.find(t => t.tableName === tableName);
                 
                 if (!table) return;
